@@ -24,8 +24,11 @@ local_conf_header:
     # QEMU networking / serial convenience
     EXTRA_IMAGE_FEATURES += "debug-tweaks"
 
-    # Phase 1: serial/nographic only — skip host GL deps (virgl hangs on
-    # anongit.freedesktop.org in some environments).
+    # Guest RAM for Mesa/Westeros (default qemuarm 256M is too small for GL).
+    QB_MEM = "-m 1024"
+
+    # Keep host qemu without virgl/gtk (fetch hangs in some envs). Guest uses
+    # virtio-gpu + Mesa (swrast/virtio_gpu); GUI smoke is via SSH, not SDL.
     PACKAGECONFIG:remove:pn-qemu-system-native = "virglrenderer glx gtk+"
     PACKAGECONFIG:remove:pn-qemu-helper-native = "virglrenderer"
 
