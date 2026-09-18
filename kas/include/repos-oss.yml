@@ -1,0 +1,23 @@
+# Minimal OSS foundation for RDK Core (Kirkstone / RDK-aligned pins).
+# No vendor, product, or legacy meta-rdk / meta-rdk-video layers.
+header:
+  version: 14
+
+repos:
+
+  poky:
+    url: "https://github.com/rdkcentral/poky.git"
+    refspec: refs/tags/rdk-4.7.0
+    path: layers/poky
+    layers:
+      meta:
+
+  meta-openembedded:
+    url: "https://github.com/rdkcentral/meta-openembedded.git"
+    refspec: refs/tags/rdk-4.0.0
+    path: layers/meta-openembedded
+    layers:
+      meta-oe:
+      meta-python:
+      meta-multimedia:
+      meta-networking:

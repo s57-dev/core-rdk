@@ -1,0 +1,11 @@
+# Kas / BitBake build artifacts
+/build/
+/layers/
+/*.log
+*.pyc
+__pycache__/
+
+# Local env
+/venv/
+.vscode/
+.idea/

@@ -1,0 +1,30 @@
+# In-tree meta-core-rdk + shared Core build settings.
+header:
+  version: 14
+
+machine: qemuarm
+distro: rdk-core
+
+repos:
+  meta-core-rdk:
+    path: meta-core-rdk
+
+bblayers_conf_header:
+  standard: |
+    LCONF_VERSION = "6"
+    BBPATH = "${TOPDIR}"
+    BBFILES ?= ""
+
+local_conf_header:
+  core-qemu: |
+    # Faster iterative Core builds
+    BB_NUMBER_THREADS ?= "${@oe.utils.cpu_count()}"
+    PARALLEL_MAKE ?= "-j ${@oe.utils.cpu_count()}"
+
+    # QEMU networking / serial convenience
+    EXTRA_IMAGE_FEATURES += "debug-tweaks"
+
+    # Phase 1: serial/nographic only — skip host GL deps (virgl hangs on
+    # anongit.freedesktop.org in some environments).
+    PACKAGECONFIG:remove:pn-qemu-system-native = "virglrenderer glx gtk+"
+    PACKAGECONFIG:remove:pn-qemu-helper-native = "virglrenderer"

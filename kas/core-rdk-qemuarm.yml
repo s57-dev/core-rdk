@@ -1,0 +1,7 @@
+header:
+  version: 14
+  includes:
+    - include/repos-oss.yml
+    - include/repos-core.yml
+
+target: core-rdk-image
