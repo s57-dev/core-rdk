@@ -1,0 +1,45 @@
+SUMMARY = "Westeros Wayland compositor"
+
+include westeros.inc
+
+SRC_URI = "${WESTEROS_URI}"
+
+PACKAGECONFIG ??= "incapp increndergl incsbprotocol xdgv4"
+PACKAGECONFIG[incapp] = "--enable-app=yes"
+PACKAGECONFIG[inctest] = "--enable-test=yes"
+PACKAGECONFIG[incplayer] = "--enable-player=yes"
+PACKAGECONFIG[increndergl] = "--enable-rendergl=yes"
+PACKAGECONFIG[incsbprotocol] = "--enable-sbprotocol=yes"
+PACKAGECONFIG[incldbprotocol] = "--enable-ldbprotocol=yes"
+PACKAGECONFIG[xdgv4] = "--enable-xdgv4=yes"
+PACKAGECONFIG[xdgv5] = "--enable-xdgv5=yes"
+PACKAGECONFIG[xdgstable] = "--enable-xdgstable=yes"
+PACKAGECONFIG[modules] = "--enable-modules=yes,,virtual/westeros-soc"
+PACKAGECONFIG[explicit-sync] = "--enable-lexpsyncprotocol=yes, , wayland-protocols"
+
+S = "${WORKDIR}/git"
+
+# Upstream configure requires GStreamer (no DISTRO_FEATURE gate).
+DEPENDS = "wayland libxkbcommon westeros-simplebuffer westeros-simpleshell virtual/westeros-soc \
+           wayland-native gstreamer1.0 gstreamer1.0-plugins-base virtual/egl glib-2.0"
+
+RDEPENDS:${PN} = "xkeyboard-config"
+
+REQUIRED_DISTRO_FEATURES += "wayland"
+
+inherit autotools pkgconfig features_check
+
+EXTRA_OECONF += "--disable-essos"
+
+do_compile:prepend() {
+   export SCANNER_TOOL=${STAGING_BINDIR_NATIVE}/wayland-scanner
+   oe_runmake -C ${S}/protocol
+   oe_runmake -C ${S}/linux-dmabuf/protocol
+   oe_runmake -C ${S}/linux-expsync/protocol
+}
+
+do_install:append() {
+    install -m 0644 ${S}/*.h ${D}${includedir}/
+}
+
+FILES:${PN}-dev += "${includedir}/*.h"

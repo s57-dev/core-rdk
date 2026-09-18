@@ -28,3 +28,31 @@ local_conf_header:
     # anongit.freedesktop.org in some environments).
     PACKAGECONFIG:remove:pn-qemu-system-native = "virglrenderer glx gtk+"
     PACKAGECONFIG:remove:pn-qemu-helper-native = "virglrenderer"
+
+    # qemuarm uses the Core no-op Device Settings HAL
+    PREFERRED_PROVIDER_virtual/vendor-devicesettings-hal = "devicesettings-hal-qemu"
+    PREFERRED_PROVIDER_virtual/devicesettings-hal = "devicesettings-hal-qemu"
+    PREFERRED_PROVIDER_virtual/vendor-hdmicec-hal = "hdmicec-hal-qemu"
+    PREFERRED_PROVIDER_virtual/hdmicec-hal = "hdmicec-hal-qemu"
+    PREFERRED_PROVIDER_virtual/vendor-pwrmgr-hal = "pwrmgr-hal-qemu"
+    PREFERRED_PROVIDER_virtual/vendor-deepsleepmgr-hal = "deepsleepmgr-hal-qemu"
+    PREFERRED_PROVIDER_virtual/vendor-deepsleep-hal = "deepsleepmgr-hal-qemu"
+    PREFERRED_PROVIDER_virtual/deepsleep-hal = "deepsleepmgr-hal-qemu"
+    PREFERRED_PROVIDER_virtual/mfrlib = "mfrlib-noop"
+    PREFERRED_PROVIDER_virtual/vendor-systemaudioplatform = "systemaudioplatform-hal-qemu"
+    PREFERRED_PROVIDER_virtual/vendor-audio-service = "audio-service-noop"
+    PREFERRED_PROVIDER_virtual/audio-service = "audio-service-noop"
+    PREFERRED_PROVIDER_virtual/vendor-rdk-gstreamer-utils-platform = "rdk-gstreamer-utils-platform-qemu"
+
+    # Westeros DRM SoC backend + Mesa EGL/GLES/GBM for qemuarm
+    PREFERRED_PROVIDER_virtual/westeros-soc = "westeros-soc-drm"
+    PREFERRED_PROVIDER_virtual/egl = "mesa"
+    PREFERRED_PROVIDER_virtual/libgles2 = "mesa"
+    PREFERRED_PROVIDER_virtual/libgbm = "mesa"
+
+    # WPE: classic libwpe + freedesktop backend (Wayland/Westeros-capable)
+    PREFERRED_PROVIDER_virtual/libwpe = "libwpe"
+    PREFERRED_PROVIDER_virtual/wpebackend = "wpebackend-fdo"
+
+    # Keep gst-plugins-base buildable without pulling GL into GStreamer.
+    PACKAGECONFIG:remove:pn-gstreamer1.0-plugins-base = "wayland egl gles2 opengl glx"
