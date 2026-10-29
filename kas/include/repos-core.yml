@@ -27,10 +27,14 @@ local_conf_header:
     # Guest RAM for Mesa/Westeros (default qemuarm 256M is too small for GL).
     QB_MEM = "-m 1024"
 
-    # Keep host qemu without virgl/gtk (fetch hangs in some envs). Guest uses
-    # virtio-gpu + Mesa (swrast/virtio_gpu); GUI smoke is via SSH, not SDL.
-    PACKAGECONFIG:remove:pn-qemu-system-native = "virglrenderer glx gtk+"
-    PACKAGECONFIG:remove:pn-qemu-helper-native = "virglrenderer"
+    # Host QEMU GTK + virgl for guest GL/Westeros on NoMachine/X11.
+    PACKAGECONFIG:append:pn-qemu-system-native = " gtk+ virglrenderer epoxy"
+    PACKAGECONFIG:append:pn-qemu-helper-native = " virglrenderer"
+    DISTRO_FEATURES_NATIVE:append = " x11 opengl"
+    DISTRO_FEATURES_NATIVESDK:append = " x11 opengl"
+    # ARM virt: GL virtio-gpu at 1280x720 (matches monorepo qemu-boot / Westeros).
+    QB_GRAPHICS:forcevariable = "-device virtio-gpu-gl-pci,edid=on,xres=1280,yres=720"
+    QB_KERNEL_CMDLINE_APPEND:append = " video=Virtual-1:1280x720@60"
 
     # qemuarm uses the Core no-op Device Settings HAL
     PREFERRED_PROVIDER_virtual/vendor-devicesettings-hal = "devicesettings-hal-qemu"

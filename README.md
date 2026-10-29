@@ -24,7 +24,9 @@ core-rdk/
 │   └── include/
 │       ├── repos-oss.yml
 │       └── repos-core.yml
-├── scripts/map-core-v.py   # JSON → BOM status table
+├── scripts/
+│   ├── map-core-v.py       # JSON → BOM status table
+│   └── start-qemu.sh       # runqemu wrapper (serial / VNC / GTK)
 └── docs/bom.md             # generated mapping
 ```
 
@@ -60,10 +62,19 @@ kas-container build kas/core-rdk-qemuarm.yml
 After a successful build:
 
 ```bash
-kas-container shell kas/core-rdk-qemuarm.yml -c 'runqemu qemuarm nographic slirp'
+./scripts/start-qemu.sh              # serial console (default)
+./scripts/start-qemu.sh --gtk        # X11 GTK window (auto-detects DISPLAY, e.g. :1002)
+./scripts/start-qemu.sh --vnc        # headless EGL + VNC on localhost:5900
 ```
 
-(Exact `runqemu` flags may vary with the kas container entrypoint.)
+Guest SSH is forwarded to `localhost:2222` (root, empty password with debug-tweaks).
+
+Or manually:
+
+```bash
+export KAS_CONTAINER_IMAGE=rdk-kas-builder:latest
+kas-container shell kas/core-rdk-qemuarm.yml -c 'runqemu qemuarm nographic slirp'
+```
 
 ## Phase 1 scope
 
