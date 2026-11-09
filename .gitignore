@@ -1,6 +1,7 @@
 # Kas / BitBake build artifacts
 /build/
 /layers/
+/artifacts/
 /*.log
 *.pyc
 __pycache__/

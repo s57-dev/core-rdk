@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Map core-v-components.json to proposed Core recipe status.
 
-Reads ../core-v-components.json (sibling of core-rdk/) by default and prints
-a BOM table. Exit code 1 if any middleware entry is missing a proposed PN
-mapping (except explicitly ignored components).
+Reads docs/core-components/core-v-components.json by default and prints a BOM
+table. Exit code 1 if any middleware entry is missing a proposed PN mapping
+(except explicitly ignored components).
 """
 
 from __future__ import annotations
@@ -114,7 +114,7 @@ def main() -> int:
     parser.add_argument(
         "--json",
         type=Path,
-        default=Path(__file__).resolve().parents[2] / "core-v-components.json",
+        default=Path(__file__).resolve().parents[1] / "docs" / "core-components" / "core-v-components.json",
         help="Path to core-v-components.json",
     )
     parser.add_argument(

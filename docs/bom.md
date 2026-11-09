@@ -1,6 +1,6 @@
 # Core-V BOM mapping
 
-Source: `/home/zoltan/rdk/corerdk/core-v-components.json`
+Source: `/home/zoltan/rdk/corerdk/core-rdk/docs/core-components/core-v-components.json`
 
 | Component | JSON layer | Status | Proposed PN | URL |
 |-----------|------------|--------|-------------|-----|
