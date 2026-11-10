@@ -247,6 +247,9 @@ case "$MODE" in
         ;;
     gtk)
         RUNQEMU_ARGS+=(gtk)
+        # Keep guest serial on stdio, not mon:vc. Otherwise the GTK window
+        # defaults to the serial VC (blinking cursor) instead of virtio-gpu.
+        RUNQEMU_ARGS+=(serialstdio)
         # Default to virgl with GTK so Westeros can page-flip on virtio-gpu-gl.
         if [[ "$WANT_GL" -eq -1 || "$WANT_GL" -eq 1 ]]; then
             RUNQEMU_ARGS+=(gl)
