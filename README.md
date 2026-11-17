@@ -1,8 +1,7 @@
 # RDK Core
 
-Standalone next-generation **Core RDK** build: portable middleware on top of
-OSS (poky / OpenEmbedded), authored in `meta-core-rdk`, driven by
-[`docs/core-components/core-v-components.json`](docs/core-components/core-v-components.json).
+Standalone  **Core RDK** build: portable middleware on top of
+OSS (poky / OpenEmbedded), authored in `meta-core-rdk`.
 
 ## Decisions
 
@@ -56,6 +55,14 @@ export KAS_CONTAINER_IMAGE=rdk-kas-builder:latest   # or your kas image
 kas-container build kas/core-rdk-qemuarm.yml      # ARM
 kas-container build kas/core-rdk-qemux86-64.yml   # x86-64
 ```
+
+### CI (qemuarm)
+
+GitHub Actions workflow [`.github/workflows/qemuarm-build.yml`](.github/workflows/qemuarm-build.yml)
+builds `kas/core-rdk-qemuarm.yml` on a **self-hosted** runner (Docker +
+`rdk-kas-builder` from the repo `Dockerfile`), then uploads the QEMU image
+artifact. Triggers: `workflow_dispatch`, and push/PR to `main` when `kas/`,
+`meta-core-rdk/`, or the Dockerfile change.
 
 x86-only changes to `meta-core-rdk` must be kas patches under
 `kas/patches/qemux86-64/` (wired from `kas/core-rdk-qemux86-64.yml`), not
