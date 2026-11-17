@@ -4,6 +4,10 @@ Standalone next-generation **Core RDK** build: portable middleware on top of
 OSS (poky / OpenEmbedded), authored in `meta-core-rdk`, driven by
 [`docs/core-components/core-v-components.json`](docs/core-components/core-v-components.json).
 
+Note: this is a sample target for Core RDK, the core layer is a separate component:
+
+https://github.com/s57-dev/meta-core-rdk
+
 ## Decisions
 
 | Item | Choice |
