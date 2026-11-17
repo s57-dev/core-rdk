@@ -10,7 +10,7 @@ OSS (poky / OpenEmbedded), authored in `meta-core-rdk`, driven by
 |------|--------|
 | Layer | New empty `meta-core-rdk` (recipes re-authored, not copied from RDKE) |
 | Distro | `rdk-core` |
-| Machine | `qemuarm` (32-bit ARM) |
+| Machine | `qemuarm` (default) or `qemux86-64` |
 | BOM | Strict Core-V JSON |
 | Exceptions | RDK Logger + Westeros in Core; ignore `InputOutput`; OpenSSL/BlueZ = OSS |
 
@@ -21,12 +21,14 @@ core-rdk/
 ├── meta-core-rdk/          # Yocto layer + distro
 ├── kas/
 │   ├── core-rdk-qemuarm.yml
+│   ├── core-rdk-qemux86-64.yml
+│   ├── patches/qemux86-64/ # x86-only meta-core-rdk patches (via kas)
 │   └── include/
 │       ├── repos-oss.yml
 │       └── repos-core.yml
 ├── scripts/
 │   ├── map-core-v.py       # JSON → BOM status table
-│   └── start-qemu.sh       # runqemu wrapper (serial / VNC / GTK)
+│   └── start-qemu.sh       # runqemu wrapper (GTK + virgl)
 └── docs/
     ├── bom.md              # generated mapping
     └── core-components/    # Core-V BOM JSON (+ schema)
@@ -51,23 +53,21 @@ or ghcr.io/siemens/kas).
 
 ```bash
 export KAS_CONTAINER_IMAGE=rdk-kas-builder:latest   # or your kas image
-kas-container build kas/core-rdk-qemuarm.yml
+kas-container build kas/core-rdk-qemuarm.yml      # ARM
+kas-container build kas/core-rdk-qemux86-64.yml   # x86-64
 ```
+
+x86-only changes to `meta-core-rdk` must be kas patches under
+`kas/patches/qemux86-64/` (wired from `kas/core-rdk-qemux86-64.yml`), not
+committed into the layer.
 
 ## Run under QEMU
 
 After a successful build:
 
 ```bash
-./scripts/start-qemu.sh              # serial console (default)
-./scripts/start-qemu.sh --gtk        # X11 GTK window (auto-detects DISPLAY, e.g. :1002)
+./scripts/start-qemu.sh                         # qemuarm GTK + virgl
+./scripts/start-qemu.sh --machine qemux86-64    # x86-64
 ```
 
-Guest SSH is forwarded to `localhost:2222` (root, empty password with debug-tweaks).
-
-Or manually:
-
-```bash
-export KAS_CONTAINER_IMAGE=rdk-kas-builder:latest
-kas-container shell kas/core-rdk-qemuarm.yml -c 'runqemu qemuarm nographic slirp'
-```
+Guest SSH is at `localhost:2222` (root, empty password with debug-tweaks).

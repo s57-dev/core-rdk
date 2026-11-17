@@ -1,0 +1,32 @@
+Upstream-Status: Pending
+
+entservices-devicesettings: match LP64 dsDisplayEventCallback_t (intptr_t)
+
+After HALIF typedef uses intptr_t, the int wrapper no longer converts.
+
+--- a/plugin/hal/dDisplayImpl.h
++++ b/plugin/hal/dDisplayImpl.h
+@@ -733,7 +733,7 @@
+             }
+         }
+         
+-        // Register display event callback using wrapper that adapts int to intptr_t
++        // Register display event callback (handle is intptr_t on LP64 HALIF)
+         dsError_t eError = dsRegisterDisplayEventCallback(handle, dsDisplayEventCallbackWrapper);
+         if (eError == dsERR_NONE) {
+             DSLOG_INFO(" SUCCESS - registered with handle=%d", static_cast<int>(handle));
+@@ -742,11 +742,10 @@
+         }
+     }
+ 
+-    // Wrapper callback that adapts int handle to intptr_t (for legacy devicesettings API compatibility)
+-    static void dsDisplayEventCallbackWrapper(int handle, dsDisplayEvent_t dsDisplayEvent, void* eventData)
++    // Wrapper matching dsDisplayEventCallback_t (intptr_t handle)
++    static void dsDisplayEventCallbackWrapper(intptr_t handle, dsDisplayEvent_t dsDisplayEvent, void* eventData)
+     {
+-        // Cast int handle to intptr_t and call the implementation
+-        dsDisplayEventCallbackImpl(static_cast<intptr_t>(handle), dsDisplayEvent, eventData);
++        dsDisplayEventCallbackImpl(handle, dsDisplayEvent, eventData);
+     }
+ 
+     // Static callback function to handle display events from HAL

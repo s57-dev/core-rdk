@@ -1,0 +1,50 @@
+# qemux86-64 Core RDK image.
+#
+# x86-only fixes must not be committed into meta-core-rdk. Put source patches
+# under kas/patches/qemux86-64/ and wire them from this file (local_conf
+# FILESEXTRAPATHS / SRC_URI, or kas repo patches on meta-core-rdk).
+header:
+  version: 14
+  includes:
+    - include/repos-oss.yml
+    - include/repos-core.yml
+
+machine: qemux86-64
+target: core-rdk-image
+
+repos:
+  # Patch source tree (this repo). Not a BitBake layer.
+  core-rdk:
+    layers:
+      .: disabled
+
+local_conf_header:
+  machine-qemux86-64: |
+    # runqemu adds virtio-vga-gl when 'gl' is passed; do not also force
+    # ARM virtio-gpu-gl-pci (would duplicate GPU devices on x86).
+    QB_GRAPHICS:forcevariable = ""
+    QB_KERNEL_CMDLINE_APPEND:append = " video=Virtual-1:1280x720@60"
+    # YouTube TV / WPE need more than the default 1G.
+    QB_MEM:forcevariable = "-m 4096"
+
+    # LP64: HALIF display callback handle was 'int' but API/impl use intptr_t.
+    FILESEXTRAPATHS:prepend:pn-devicesettings-hal-headers = "${TOPDIR}/../kas/patches/qemux86-64:"
+    SRC_URI:append:pn-devicesettings-hal-headers = " file://0001-dsDisplay-callback-use-intptr_t-for-LP64.patch"
+
+    # entservices wrapper still used int; align with patched HALIF typedef.
+    FILESEXTRAPATHS:prepend:pn-entservices-devicesettings = "${TOPDIR}/../kas/patches/qemux86-64:"
+    SRC_URI:append:pn-entservices-devicesettings = " file://0002-entservices-devicesettings-display-callback-intptr_t.patch"
+
+    # --- Browser media: codecs + GBM / GStreamer-GL (x86 kas only) ---
+    # repos-core strips GL from gst-plugins-base; put it back for WPE video.
+    LICENSE_FLAGS_ACCEPTED += "commercial"
+    PACKAGECONFIG:append:pn-gstreamer1.0-plugins-base = " wayland egl gles2 gbm"
+    PACKAGECONFIG:append:pn-gstreamer1.0-plugins-good = " vpx"
+    # Override slim WPE flags (last -D wins in cmake).
+    EXTRA_OECMAKE:append:pn-wpewebkit = " -DUSE_GSTREAMER_GL=ON -DUSE_GBM=ON -DUSE_LIBDRM=ON"
+    DEPENDS:append:pn-wpewebkit = " libdrm virtual/libgbm"
+    IMAGE_INSTALL:append = " \
+        gstreamer1.0-libav \
+        gstreamer1.0-plugins-good-vpx \
+        gstreamer1.0-plugins-base-opengl \
+        "

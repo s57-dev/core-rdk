@@ -4,4 +4,11 @@ header:
     - include/repos-oss.yml
     - include/repos-core.yml
 
+machine: qemuarm
 target: core-rdk-image
+
+local_conf_header:
+  machine-qemuarm: |
+    # ARM virt: GL virtio-gpu at 1280x720 (matches monorepo qemu-boot / Westeros).
+    QB_GRAPHICS:forcevariable = "-device virtio-gpu-gl-pci,edid=on,xres=1280,yres=720"
+    QB_KERNEL_CMDLINE_APPEND:append = " video=Virtual-1:1280x720@60"
